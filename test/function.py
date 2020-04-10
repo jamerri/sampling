@@ -6,6 +6,7 @@ import numpy as np
 from conf import conf
 from datetime import datetime
 import math
+from scipy import stats
 
 '定义为全局变量'
 conf = conf.KernelDMVW()
@@ -31,10 +32,22 @@ def write_D_test_data(test_txt):
 """写NLPD到TXT"""
 
 
-def write_NLPD(NLPD_txt):
+def write_NLPD1(NLPD_txt):
     NLPD_w = np.array(NLPD_txt)
     time3 = datetime.now().strftime("%Y-%m-%d-%H-%M-%S")
-    np.savetxt('C:/Users/jamerri/Desktop/实验数据/D_NLPD-' + time3 + '.txt', NLPD_w, fmt="%.5f", delimiter=' ')
+    np.savetxt('C:/Users/jamerri/Desktop/实验数据/D_NLPD1-' + time3 + '.txt', NLPD_w, fmt="%.5f", delimiter=' ')
+
+
+def write_NLPD2(NLPD_txt):
+    NLPD_w = np.array(NLPD_txt)
+    time3 = datetime.now().strftime("%Y-%m-%d-%H-%M-%S")
+    np.savetxt('C:/Users/jamerri/Desktop/实验数据/D_NLPD2-' + time3 + '.txt', NLPD_w, fmt="%.5f", delimiter=' ')
+
+
+def write_NLPD3(NLPD_txt):
+    NLPD_w = np.array(NLPD_txt)
+    time3 = datetime.now().strftime("%Y-%m-%d-%H-%M-%S")
+    np.savetxt('C:/Users/jamerri/Desktop/实验数据/D_NLPD3-' + time3 + '.txt', NLPD_w, fmt="%.5f", delimiter=' ')
 
 
 '''网格中心点函数'''
@@ -136,6 +149,7 @@ def mean_value_and_variance_value(X, Y, C, KZ):
             variance_value[l] = confidence_value[l] * temporary_value[l] / weight_value[l] + (
                     1 - confidence_value[l]) * v_0
     return mean_value, variance_value
+
 
 def mean_value_and_variance_value_KernelDMVW(X, Y, C, W_V, W_D, KZ, WS):
     # 网格中心坐标
@@ -247,8 +261,9 @@ def mean_value_and_variance_value_KernelDMVW(X, Y, C, W_V, W_D, KZ, WS):
             variance_value[i] = v_0
         else:
             variance_value[i] = confidence_value[i] * temporary_value[i] / weight_value[i] + (
-                        1 - confidence_value[i]) * v_0
+                    1 - confidence_value[i]) * v_0
     return mean_value, variance_value
+
 
 def mean_value_and_variance_value_KernelDMVW_pro(X, Y, C, W_V, W_D, KZ, WS, BT):
     # 网格中心坐标
@@ -324,7 +339,7 @@ def mean_value_and_variance_value_KernelDMVW_pro(X, Y, C, W_V, W_D, KZ, WS, BT):
                 conf.exp_fact = (((center_x - x) ** 2 / sigma_x_sq) + ((center_y - y) ** 2 / sigma_y_sq) -
                                  ((2 * rho * (center_x - x) * (center_y - y)) / (sigma_x * sigma_y)))
                 w = (conf.norm_fact * np.exp(-(0.5 / (1 - rho ** 2)) * conf.exp_fact)) * (
-                            1 + conf.wind_speed_factor * conf.wind_speeds * c_angle)
+                        1 + conf.wind_speed_factor * conf.wind_speeds * c_angle)
                 if w < 0:
                     weight[j] = 0
                     concentration_weight[j] = 0
@@ -374,8 +389,9 @@ def mean_value_and_variance_value_KernelDMVW_pro(X, Y, C, W_V, W_D, KZ, WS, BT):
             variance_value[i] = v_0
         else:
             variance_value[i] = confidence_value[i] * temporary_value[i] / weight_value[i] + (
-                        1 - confidence_value[i]) * v_0
+                    1 - confidence_value[i]) * v_0
     return mean_value, variance_value
+
 
 def find_number(X, Y):
     conf.position_x = X
@@ -388,6 +404,7 @@ def find_number(X, Y):
     number_y = int(np.ceil((conf.position_y - conf.min_y) / conf.cell_size_y))
     number = int((number_y - 1) * number_cell_x + number_x - 1)  # 算出位置后减1,因为检索从0开始
     return number
+
 
 def calculateSpeed_direction(V_X, V_Y):
     ux_speed = np.array(V_Y)  # y轴
@@ -408,3 +425,13 @@ def calculateSpeed_direction(V_X, V_Y):
         calculate_speed[i] = speed
         calculate_direction[i] = direction
     return calculate_speed, calculate_direction
+
+
+'''秩和检验'''
+
+
+def signed_rank_test(num1, num2):
+    x = num1.tolist()
+    y = num2.tolist()
+    res = stats.wilcoxon(x, y)
+    return res
